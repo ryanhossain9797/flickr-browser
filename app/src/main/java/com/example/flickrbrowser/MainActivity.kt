@@ -1,5 +1,6 @@
 package com.example.flickrbrowser
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -17,10 +18,24 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,OnDataAvail
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne","android,oreo","en-us", true)
         //--------------Step 1, request raw json from url
         val getRawData = GetRawData(this)
-        getRawData.execute("https://api.flickr.com/services/feeds/photos_public.gne?&format=json&nojsoncallback=1&tags=android")
+        getRawData.execute(url)
 
+    }
+
+    private fun createUri(baseUri:String,searchCriteria:String,lang:String,matchAll:Boolean):String{
+        Log.d(TAG,"createUri: start")
+        return Uri.parse(baseUri)
+            .buildUpon()
+            .appendQueryParameter("tags", searchCriteria)
+            .appendQueryParameter("lang", lang)
+            .appendQueryParameter("tagmode", if(matchAll) "ALL" else "ANY")
+            .appendQueryParameter("tags", searchCriteria)
+            .appendQueryParameter("format", "json")
+            .appendQueryParameter("nojsoncallback", "1")
+            .build().toString()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
