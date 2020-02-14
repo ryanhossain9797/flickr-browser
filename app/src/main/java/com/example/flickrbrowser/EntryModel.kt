@@ -1,5 +1,7 @@
 package com.example.flickrbrowser
 
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import java.io.*
 
@@ -8,40 +10,42 @@ class EntryModel(var title: String,
                  var authorId: String,
                  var fullLink: String,
                  var tags: String,
-                 var smallLink: String):Serializable
-{
-
-    companion object{
-        private const val serialVersionUID = 1L
+                 var smallLink: String) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!
+    ) {
     }
+
     override fun toString(): String {
         return "Photo(title='$title',author= '$author' authorId='$authorId', link='$fullLink', tags='$tags', image='$smallLink')\n"
     }
 
-    @Throws(IOException::class)
-    private fun writeObject(out: ObjectOutputStream){
-        Log.d("Photo","writeObject: called")
-        out.writeUTF(title)
-        out.writeUTF(author)
-        out.writeUTF(authorId)
-        out.writeUTF(fullLink)
-        out.writeUTF(tags)
-        out.writeUTF(smallLink)
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(title)
+        parcel.writeString(author)
+        parcel.writeString(authorId)
+        parcel.writeString(fullLink)
+        parcel.writeString(tags)
+        parcel.writeString(smallLink)
     }
 
-    @Throws(IOException::class, ClassNotFoundException::class)
-    private fun readObject(inStream: ObjectInputStream){
-        Log.d("photo", "readObject: called")
-        title = inStream.readUTF()
-        author = inStream.readUTF()
-        authorId = inStream.readUTF()
-        fullLink = inStream.readUTF()
-        tags = inStream.readUTF()
-        smallLink = inStream.readUTF()
+    override fun describeContents(): Int {
+        return 0
     }
 
-    @Throws(ObjectStreamException::class)
-    private fun readObjectNoData(){
-        Log.d("photo", "readObjectNoData: called")
+    companion object CREATOR : Parcelable.Creator<EntryModel> {
+        override fun createFromParcel(parcel: Parcel): EntryModel {
+            return EntryModel(parcel)
+        }
+
+        override fun newArray(size: Int): Array<EntryModel?> {
+            return arrayOfNulls(size)
+        }
     }
+
 }

@@ -17,7 +17,7 @@ class DetailsActivity : BaseActivity() {
         activateToolbar(true)
         Log.d(TAG,"onCreate: ends")
 
-        val photo = intent.getSerializableExtra(PHOTO_TRANSFER) as EntryModel
+        val photo = intent.getParcelableExtra(PHOTO_TRANSFER) as EntryModel
         photo_author.text = photo.author
         photo_title.text = photo.title
         photo_tags.text = photo.tags
