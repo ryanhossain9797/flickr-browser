@@ -7,16 +7,33 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONException
 
-class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,OnDataAvailableRecepient{
+class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
+    OnDataAvailableRecepient, OnRecyclerClickListener{
+
+    private val TAG = "MainActivity"
+
+    private val flickrRecyclerViewAdapter = FlickrRecyclerViewAdapter(ArrayList())//start with no data
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        recycler_view.layoutManager = LinearLayoutManager(this)
+
+        //Needs the entire recyclerview cause it uses touch x,y to find the item number
+        recycler_view.addOnItemTouchListener(RecyclerItemClickListener(this,recycler_view,this))
+        recycler_view.adapter = flickrRecyclerViewAdapter
+
+
 
         val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne","android,oreo","en-us", true)
         //--------------Step 1, request raw json from url
@@ -56,6 +73,8 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,OnDataAvail
         }
     }
 
+
+    //------------------------------------------
     //-------Callback function for getting raw json
     override fun onDownloadComplete(data: String, status: DownloadStatus){
         if(status == DownloadStatus.OK){
@@ -69,18 +88,34 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,OnDataAvail
             Log.e(TAG,"error: status is: $status")
         }
     }
+    //------------------------------------------
 
-    //-------Callback function for getting photo list using raw data
+
+
+    //------------------------------------------
+    //-------Callback function for getting photo list using raw data, callback
     override fun onDataAvailable(data: ArrayList<Photo>){
         Log.d(TAG, "onDataAvailable: called")
+        flickrRecyclerViewAdapter.loadNewData(data)
+        Log.d(TAG, "onDataAvailable: ended")
     }
     //-------Error if getting photo list fails
     override fun onError(err: JSONException){
         Log.d(TAG, "onError: error parsing json ${err.message}")
     }
+    //------------------------------------------
 
-    companion object{
-        private const val TAG = "MainActivity"
+
+
+    //------------------------------------------
+    //-------What happens when an item in the list gets clicked or long clicked, callback
+    override fun onItemClick(view: View, position: Int) {
+        Log.d(TAG,"onItemClick: starts")
+        Toast.makeText(this,"tap at $position",Toast.LENGTH_SHORT).show()
     }
-
+    override fun onItemLongClick(view: View, position: Int) {
+        Log.d(TAG,"onItemLongClick: starts")
+        Toast.makeText(this,"long tap at $position",Toast.LENGTH_SHORT).show()
+    }
+    //------------------------------------------
 }

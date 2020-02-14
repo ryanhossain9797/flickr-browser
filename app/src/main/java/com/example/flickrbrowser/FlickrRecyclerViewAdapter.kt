@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class FlickrImageViewHolder(view: View): RecyclerView.ViewHolder(view){
     //------------Holds a view for the code to interact with
@@ -33,11 +34,21 @@ class FlickrRecyclerViewAdapter(private var photoList: List<Photo>): RecyclerVie
     }
 
     override fun getItemCount(): Int {
+        //-------------Gives count of items in list
         Log.d(TAG, "getItemCount: called")
         return if(photoList.isNotEmpty()) photoList.size else 0
     }
 
     override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //-------------When an existing view needs to load new data
+        val photo = photoList[position]
+        Log.d(TAG,"onBindViewHolder: called")
+        Picasso.get()
+            .load(photo.image)
+            .error(R.drawable.placeholder)
+            .placeholder(R.drawable.placeholder)
+            .into(holder.thumbnail)
+
+        holder.title.text = photo.title
     }
 }
