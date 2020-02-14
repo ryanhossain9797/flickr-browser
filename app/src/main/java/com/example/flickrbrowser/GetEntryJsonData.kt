@@ -6,17 +6,17 @@ import org.json.JSONException
 import org.json.JSONObject
 
 interface OnDataAvailableRecepient{
-    fun onDataAvailable(data: ArrayList<Photo>)
+    fun onDataAvailable(data: ArrayList<EntryModel>)
     fun onError(err: JSONException)
 }
 
 class GetFlickrJsonData(private val listener:
-                        OnDataAvailableRecepient):AsyncTask<String,Void,ArrayList<Photo>>() {
+                        OnDataAvailableRecepient):AsyncTask<String,Void,ArrayList<EntryModel>>() {
     private val TAG = "GetFlickrJsonData"
 
-    override fun doInBackground(vararg params: String): ArrayList<Photo> {
+    override fun doInBackground(vararg params: String): ArrayList<EntryModel> {
         Log.d(TAG,"doInBackground starts")
-        val photoList = ArrayList<Photo>();
+        val photoList = ArrayList<EntryModel>();
         try{
             val jsonData = JSONObject(params[0])
             val itemsArray = jsonData.getJSONArray("items")
@@ -28,10 +28,10 @@ class GetFlickrJsonData(private val listener:
                 val tags = photoJSON.getString("tags")
 
                 val jsonMedia = photoJSON.getJSONObject("media")
-                val photoUrl = jsonMedia.getString("m")
-                val link = photoUrl.replaceFirst("_m.jpg","_b.jpg")
+                val smallLink = jsonMedia.getString("m")
+                val fullLink = smallLink.replaceFirst("_m.jpg","_b.jpg")
 
-                val photo = Photo(title,author,author_id,link,tags,photoUrl)
+                val photo = EntryModel(title,author,author_id,fullLink,tags,smallLink)
 
                 photoList.add(photo)
                 Log.d(TAG,"doInBackground $photo")
@@ -47,7 +47,7 @@ class GetFlickrJsonData(private val listener:
         return photoList
     }
 
-    override fun onPostExecute(result: ArrayList<Photo>) {
+    override fun onPostExecute(result: ArrayList<EntryModel>) {
         Log.d(TAG,"onPostExecute: starts")
         listener.onDataAvailable(result)
         Log.d(TAG,"onPostExecute: finished")

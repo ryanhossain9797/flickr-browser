@@ -1,21 +1,18 @@
 package com.example.flickrbrowser
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONException
 
-class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
+class MainActivity : BaseActivity(),OnDownloadCompleteRecepient,
     OnDataAvailableRecepient, OnRecyclerClickListener{
 
     private val TAG = "MainActivity"
@@ -23,9 +20,10 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
     private val flickrRecyclerViewAdapter = FlickrRecyclerViewAdapter(ArrayList())//start with no data
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG,"onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        activateToolbar(false)
 
         recycler_view.layoutManager = LinearLayoutManager(this)
 
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
         //--------------Step 1, request raw json from url
         val getRawData = GetRawData(this)
         getRawData.execute(url)
-
+        Log.d(TAG,"onCreate: ends")
     }
 
     private fun createUri(baseUri:String,searchCriteria:String,lang:String,matchAll:Boolean):String{
@@ -94,7 +92,7 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
 
     //------------------------------------------
     //-------Callback function for getting photo list using raw data, callback
-    override fun onDataAvailable(data: ArrayList<Photo>){
+    override fun onDataAvailable(data: ArrayList<EntryModel>){
         Log.d(TAG, "onDataAvailable: called")
         flickrRecyclerViewAdapter.loadNewData(data)
         Log.d(TAG, "onDataAvailable: ended")
@@ -111,7 +109,13 @@ class MainActivity : AppCompatActivity(),OnDownloadCompleteRecepient,
     //-------What happens when an item in the list gets clicked or long clicked, callback
     override fun onItemClick(view: View, position: Int) {
         Log.d(TAG,"onItemClick: starts")
-        Toast.makeText(this,"tap at $position",Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this,"tap at $position",Toast.LENGTH_SHORT).show()
+        val photo = flickrRecyclerViewAdapter.getPhoto(position)
+        if(photo!=null){
+            val intent = Intent(this,DetailsActivity::class.java)
+            intent.putExtra(PHOTO_TRANSFER,photo)
+            startActivity(intent)
+        }
     }
     override fun onItemLongClick(view: View, position: Int) {
         Log.d(TAG,"onItemLongClick: starts")

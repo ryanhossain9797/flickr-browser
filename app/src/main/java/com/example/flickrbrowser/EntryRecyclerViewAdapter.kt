@@ -15,7 +15,7 @@ class FlickrImageViewHolder(view: View): RecyclerView.ViewHolder(view){
     var title: TextView = view.findViewById(R.id.title)
 }
 
-class FlickrRecyclerViewAdapter(private var photoList: List<Photo>): RecyclerView.Adapter<FlickrImageViewHolder>() {
+class FlickrRecyclerViewAdapter(private var entryModelList: List<EntryModel>): RecyclerView.Adapter<FlickrImageViewHolder>() {
     private val TAG = "lickrRecyclerViewA"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlickrImageViewHolder {
         //------------Called by layout manager when it needs a new view
@@ -24,27 +24,27 @@ class FlickrRecyclerViewAdapter(private var photoList: List<Photo>): RecyclerVie
         return FlickrImageViewHolder(view)
     }
 
-    fun loadNewData(newPhotos: List<Photo>){
-        photoList = newPhotos
+    fun loadNewData(newEntryModels: List<EntryModel>){
+        entryModelList = newEntryModels
         notifyDataSetChanged()
     }
 
-    fun getPhoto(position: Int): Photo?{
-        return if(photoList.isNotEmpty()) photoList[position] else null;
+    fun getPhoto(position: Int): EntryModel?{
+        return if(entryModelList.isNotEmpty()) entryModelList[position] else null;
     }
 
     override fun getItemCount(): Int {
         //-------------Gives count of items in list
         Log.d(TAG, "getItemCount: called")
-        return if(photoList.isNotEmpty()) photoList.size else 0
+        return if(entryModelList.isNotEmpty()) entryModelList.size else 0
     }
 
     override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
         //-------------When an existing view needs to load new data
-        val photo = photoList[position]
+        val photo = entryModelList[position]
         Log.d(TAG,"onBindViewHolder: called")
         Picasso.get()
-            .load(photo.image)
+            .load(photo.smallLink)
             .error(R.drawable.placeholder)
             .placeholder(R.drawable.placeholder)
             .into(holder.thumbnail)
