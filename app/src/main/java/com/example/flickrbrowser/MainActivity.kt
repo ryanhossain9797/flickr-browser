@@ -3,6 +3,7 @@ package com.example.flickrbrowser
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +15,7 @@ import org.json.JSONException
 
 class MainActivity : BaseActivity(),OnDownloadCompleteRecepient,
     OnDataAvailableRecepient, OnRecyclerClickListener{
+
 
     private val TAG = "MainActivity"
 
@@ -38,6 +40,19 @@ class MainActivity : BaseActivity(),OnDownloadCompleteRecepient,
         val getRawData = GetRawData(this)
         getRawData.execute(url)
         Log.d(TAG,"onCreate: ends")
+    }
+
+    override fun onResume() {
+        Log.d(TAG,"onResume: called")
+        super.onResume()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val searchTerm = sharedPref.getString(FLICKR_QUERY,"")
+        if(searchTerm!!.isNotEmpty()){
+            val url = createUri("https://api.flickr.com/services/feeds/photos_public.gne",searchTerm.replace(" ",","),"en-us", true)
+            val getRawData = GetRawData(this)
+            getRawData.execute(url)
+        }
+        Log.d(TAG,"onResume: ended")
     }
 
     private fun createUri(baseUri:String,searchCriteria:String,lang:String,matchAll:Boolean):String{
@@ -66,7 +81,10 @@ class MainActivity : BaseActivity(),OnDownloadCompleteRecepient,
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_search -> true
+            R.id.action_search -> {
+                startActivity(Intent(this,SearchActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

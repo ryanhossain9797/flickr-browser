@@ -36,19 +36,25 @@ class FlickrRecyclerViewAdapter(private var entryModelList: List<EntryModel>): R
     override fun getItemCount(): Int {
         //-------------Gives count of items in list
         Log.d(TAG, "getItemCount: called")
-        return if(entryModelList.isNotEmpty()) entryModelList.size else 0
+        return if(entryModelList.isNotEmpty()) entryModelList.size else 1
     }
 
     override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
         //-------------When an existing view needs to load new data
-        val photo = entryModelList[position]
-        Log.d(TAG,"onBindViewHolder: called")
-        Picasso.get()
-            .load(photo.smallLink)
-            .error(R.drawable.placeholder)
-            .placeholder(R.drawable.placeholder)
-            .into(holder.thumbnail)
+        if(entryModelList.isEmpty()){
+            holder.thumbnail.setImageResource(R.drawable.placeholder)
+            holder.title.text = "No photo found\n\nTry something else"
+        }
+        else {
+            val photo = entryModelList[position]
+            Log.d(TAG, "onBindViewHolder: called")
+            Picasso.get()
+                .load(photo.smallLink)
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .into(holder.thumbnail)
 
-        holder.title.text = photo.title
+            holder.title.text = photo.title
+        }
     }
 }
