@@ -9,19 +9,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class FlickrImageViewHolder(view: View): RecyclerView.ViewHolder(view){
+class EntryImageViewHolder(view: View): RecyclerView.ViewHolder(view){
     //------------Holds a view for the code to interact with
     var thumbnail: ImageView = view.findViewById(R.id.thumbnail)
     var title: TextView = view.findViewById(R.id.title)
 }
 
-class FlickrRecyclerViewAdapter(private var entryModelList: List<EntryModel>): RecyclerView.Adapter<FlickrImageViewHolder>() {
+class EntryRecyclerViewAdapter(private var entryModelList: List<EntryModel>): RecyclerView.Adapter<EntryImageViewHolder>() {
     private val TAG = "lickrRecyclerViewA"
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlickrImageViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryImageViewHolder {
         //------------Called by layout manager when it needs a new view
         Log.d(TAG,"onCreateViewHolder: new view requested")
         val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_entry,parent,false)
-        return FlickrImageViewHolder(view)
+        return EntryImageViewHolder(view)
     }
 
     fun loadNewData(newEntryModels: List<EntryModel>){
@@ -39,7 +39,7 @@ class FlickrRecyclerViewAdapter(private var entryModelList: List<EntryModel>): R
         return if(entryModelList.isNotEmpty()) entryModelList.size else 1
     }
 
-    override fun onBindViewHolder(holder: FlickrImageViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: EntryImageViewHolder, position: Int) {
         //-------------When an existing view needs to load new data
         if(entryModelList.isEmpty()){
             holder.thumbnail.setImageResource(R.drawable.placeholder)

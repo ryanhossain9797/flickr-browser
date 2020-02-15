@@ -19,7 +19,7 @@ class MainActivity : BaseActivity(),OnDownloadCompleteRecepient,
 
     private val TAG = "MainActivity"
 
-    private val flickrRecyclerViewAdapter = FlickrRecyclerViewAdapter(ArrayList())//start with no data
+    private val flickrRecyclerViewAdapter = EntryRecyclerViewAdapter(ArrayList())//start with no data
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG,"onCreate: starts")
